@@ -219,8 +219,17 @@ with col2:
 ''
 ''
 
-st.dataframe(filtered_df_down)
+query = st.text_input("Filter dataframe")
 
+if query:
+    mask = filtered_df_down.applymap(lambda x: query in str(x).lower()).any(axis=1)
+    filtered_df_down = filtered_df_down[mask]
+
+st.data_editor(
+    filtered_df_down,
+    hide_index=True, 
+    column_order=('bin_elevations', 'panel_number','ElementName | <lambda>', 'panel_type | <lambda>','Depth | max', 'Duration | [seconds]','Duration | [minutes]', 'layer length [m]','Performance rate | [cm/min]', 'Suspension Amount layer [m³] | mean','Soil Type | <lambda>', 'Susp.-Pressure | mean','PKDK M | mean', 'Suspension Amount | max', 'Supension Flow | mean','Rod Rotation Speed | mean', 'Suspension Amount2 | max','Crowd-Force | mean','Date | max', 'TopElevationOfElementCOL | max','ToeLevelOfElement | min', 'elevations | max', 'elevations | min','penetration | max','rounded_sta | max', 'Designation_boring | <lambda>','Elev_Class')
+) 
 
 
 #first_year = gdp_df[gdp_df['Year'] == from_year]
