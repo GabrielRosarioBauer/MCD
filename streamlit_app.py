@@ -18,6 +18,7 @@ import datetime
 st.set_page_config(
     page_title='MCD dashboard',
     page_icon=':bar_chart:', # This is an emoji shortcode. Could be a URL too.
+    layout="wide"
 )
 
 # -----------------------------------------------------------------------------
