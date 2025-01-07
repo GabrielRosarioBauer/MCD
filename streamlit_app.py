@@ -216,9 +216,11 @@ with col1:
 with col2:
     st.plotly_chart(fig_px2, use_container_width=True)
 
+''
+''
 
-''
-''
+st.dataframe(filtered_df_down)
+
 
 
 #first_year = gdp_df[gdp_df['Year'] == from_year]
