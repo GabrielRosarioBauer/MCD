@@ -325,14 +325,20 @@ with col2:
 
 ''
 ''
-fig_px3 = graph_interactive_bar(filtered_df_down, x='Performance rate | [cm/min]', y=filtered_df_down['bin_elevations'].astype('str'),
+
+ave_prod_elev_layer_down = filtered_df_down.groupby(
+    by=['bin_elevations','Soil Type | <lambda>','Elev_Class'])[['Performance rate | [cm/min]',
+                                                                'Suspension Amount layer [m³] | mean']].mean()
+ave_prod_elev_layer_down.dropna(inplace=True)
+
+fig_px3 = graph_interactive_bar(ave_prod_elev_layer_down, x='Performance rate | [cm/min]', y=ave_prod_elev_layer_down['bin_elevations'].astype('str'),
                             color='Soil Type | <lambda>',title='Av Performance vs Geology over depth (down)'
-                            ,hover_data=filtered_df_down['Performance rate | [cm/min]'],
+                            ,hover_data=ave_prod_elev_layer_down['Performance rate | [cm/min]'],
                       ordered_array = elev_bins_btronic_boring_sorted_str,baseline=0,annotation_text=None)
 
-fig_px4 = graph_interactive_bar(filtered_df_down, x='Suspension Amount layer [m³] | mean', y=filtered_df_down['bin_elevations'].astype('str'),
+fig_px4 = graph_interactive_bar(ave_prod_elev_layer_down, x='Suspension Amount layer [m³] | mean', y=ave_prod_elev_layer_down['bin_elevations'].astype('str'),
                             color='Soil Type | <lambda>',title='Av Suspension vol vs Geology over depth (down)'
-                            ,hover_data=filtered_df_down['Suspension Amount layer [m³] | mean'],
+                            ,hover_data=ave_prod_elev_layer_down['Suspension Amount layer [m³] | mean'],
                       ordered_array = elev_bins_btronic_boring_sorted_str,baseline=0,annotation_text=None)
 
 col3, col4 = st.columns(2)
