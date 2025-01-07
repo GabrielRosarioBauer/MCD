@@ -19,6 +19,11 @@ st.set_page_config(
     page_title='MCD dashboard',
     page_icon=':bar_chart:', # This is an emoji shortcode. Could be a URL too.
 )
+
+# -----------------------------------------------------------------------------
+# Declare some useful functions.
+
+@st.cache_data
 # Programmatically switch to dark mode using a custom theme
 theme_settings = {
     "base": "dark",
@@ -28,11 +33,6 @@ theme_settings = {
     "textColor": "#ffffff",
 }
 st.write(f"Theme settings: {theme_settings}")
-# -----------------------------------------------------------------------------
-# Declare some useful functions.
-
-@st.cache_data
-
 
 def get_data(path):
     """Grab GDP data from a CSV file.
