@@ -264,7 +264,7 @@ with col2:
 
 ''
 ''
-st.dataframe(filter_dataframe(df))
+st.dataframe(filter_dataframe(filtered_df_down))
 
 #first_year = gdp_df[gdp_df['Year'] == from_year]
 #last_year = gdp_df[gdp_df['Year'] == to_year]
