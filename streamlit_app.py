@@ -182,10 +182,16 @@ def graph_interactive_bar(df, x, y, color, title, hover_data, ordered_array,base
                       annotation_position='bottom right'
                      )
 #    fig.update_layout()
-    
+    if "Performance" in x: 
+        fig.update_xaxes(range=[0, 150])
+    elif "Suspension" in x:
+        fig.update_xaxes(range=[0, 1])
+    else:
+        pass
+      
     fig.update_yaxes(autorange="reversed")
     
-    return fig.show()
+    return fig
 
 
 path = './data/01_06_SCM_btron_boring.xlsx'
