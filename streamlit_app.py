@@ -157,6 +157,11 @@ selected_borings = st.multiselect(
        'AP2923', 'AP2916', 'AP2918', 'AP2913', 'AP2933', 'AP2927',
        'AP2917'])
 
+# Sidebar with vertical slider
+
+with st.sidebar:
+    slider_value = st.slider("Select Value Range", min_value=0, max_value=20, value=20)
+
 ''
 ''
 ''
@@ -169,6 +174,7 @@ filtered_df_down = df_down[
     (df_down['Designation_boring | <lambda>'].isin(selected_borings))
     & (df_down['panel_number'] <= to_panel)
     & (from_panel <= df_down['panel_number'])
+    & (df_down['Depth | max'] <= slider_value)
 ]
 
 st.header('btronic information over panel numbers', divider='gray')
@@ -176,11 +182,27 @@ st.header('btronic information over panel numbers', divider='gray')
 ''
 
 
-fig_px = graph_interactive_boxplot(filtered_df_down, x='Performance rate | [cm/min]', y=filtered_df_down['bin_elevations'].astype('str'),
-                            color='Soil Type | <lambda>',title='SCM_2022 Performance Rate & Geology over depth (down)'
+fig_px1 = graph_interactive_boxplot(filtered_df_down, x='Performance rate | [cm/min]', y=filtered_df_down['bin_elevations'].astype('str'),
+                            color='Soil Type | <lambda>',title='SCM Performance Rate & Geology over depth (down)'
                             ,hover_data=filtered_df_down['panel_number'], ordered_array = elev_bins_btronic_boring_sorted_str, notched=False, point='all',y_axis_title='Bin elevations [m]')
 
-st.plotly_chart(fig_px, use_container_width=True)
+fig_px2 = graph_interactive_boxplot(filtered_df_down, x='Performance rate | [cm/min]', y='Soil Type | <lambda>',
+                            color='Soil Type | <lambda>',title='SCM Performance rateVsGeology (down)'
+                            ,hover_data=filtered_df_down['panel_number'], ordered_array = ['G','S'],
+                            notched=False, point='all',y_axis_title='Soil type')
+
+# Create two columns
+col1, col2 = st.columns(2)
+
+
+# Place each figure in a column
+with col1:
+    st.plotly_chart(fig_px1, use_container_width=True)
+
+# Place each figure in a column
+with col2:
+    st.plotly_chart(fig_px2, use_container_width=True)
+
 
 ''
 ''
