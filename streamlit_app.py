@@ -171,7 +171,7 @@ from_depth, to_depth = st.slider(
     'Which depths are you interested in?',
     min_value=min_depth_value,
     max_value=max_depth_value,
-    step=1)
+    step=[min_value,max_value])
     
 ''
 ''
