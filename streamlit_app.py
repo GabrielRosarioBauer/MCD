@@ -24,6 +24,8 @@ st.set_page_config(
 # Declare some useful functions.
 
 @st.cache_data
+
+
 def get_data(path):
     """Grab GDP data from a CSV file.
 
@@ -61,6 +63,14 @@ def get_data(path):
     
     # Instead of a CSV on disk, you could read from an HTTP endpoint here too.
     df_down = pd.read_excel('./data/01_06_SCM_btron_boring.xlsx', sheet_name='SCM_down_df', index_col=0, dtype=dtypes_column)
+    
+    def string_to_interval(s):
+    left = float(s.split(',')[0][1:])  # Extract left bound
+    right = float(s.split(',')[1][:-1])  # Extract right bound
+    return pd.Interval(left=left, right=right, closed='right')
+    
+    categories = pd.Categorical(parsed_intervals)                            
+    df_down['bin_elevations'] = pd.Categorical(df_down['bin_elevations'].apply(string_to_interval))
     
     return df_down
 
