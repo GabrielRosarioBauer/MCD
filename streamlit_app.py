@@ -127,11 +127,9 @@ df_down = get_data(path)
 
 # Set the title that appears at the top of the page.
 '''
-# :earth_americas: GDP dashboard
-
-Browse GDP data from the [World Bank Open Data](https://data.worldbank.org/) website. As you'll
-notice, the data only goes to 2022 right now, and datapoints for certain years are often missing.
-But it's otherwise a great (and did I mention _free_?) source of data.
+# :building_construction: MCD dashboard :bar_chart:
+## :pushpin: Data Analysis
+Explore MCD btronic data from database.
 '''
 
 # Add some spacing
