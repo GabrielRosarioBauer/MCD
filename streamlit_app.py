@@ -159,9 +159,15 @@ selected_borings = st.multiselect(
 
 # Sidebar with vertical slider
 
-with st.sidebar:
-    slider_value = st.slider("Select Value Range", min_value=0, max_value=20, value=20)
+min_depht_value = df_down['Depth | max'].min()
+max_depht_value = df_down['Depth | max'].max()
 
+from_depth, to_depth = st.slider(
+    'Which depth are you interested in?',
+    min_depht_value=min_depht_value,
+    max_depht_value=max_depht_value,
+    value=[min_depht_value, max_depht_value])
+    
 ''
 ''
 ''
@@ -174,7 +180,8 @@ filtered_df_down = df_down[
     (df_down['Designation_boring | <lambda>'].isin(selected_borings))
     & (df_down['panel_number'] <= to_panel)
     & (from_panel <= df_down['panel_number'])
-    & (df_down['Depth | max'] <= slider_value)
+    & (df_down['Depth | max'] <= to_depth)
+    & (from_depth <= df_down['Depth | max'])
 ]
 
 st.header('btronic information over panel numbers', divider='gray')

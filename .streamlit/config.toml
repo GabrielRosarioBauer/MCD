@@ -4,3 +4,8 @@ primaryColor = "#1abc9c"
 backgroundColor = "#0e1117"
 secondaryBackgroundColor = "#262730"
 textColor = "#ffffff"
+
+[browser]
+gatherUsageStats = false
+# Set the layout to wide mode
+layout = "wide"
