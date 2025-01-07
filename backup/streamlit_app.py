@@ -149,83 +149,44 @@ Explore MCD btronic data from database.
 ''
 ''
 
-def filter_dataframe(df: pd.DataFrame) -> pd.DataFrame:
-    """
-    Adds a UI on top of a dataframe to let viewers filter columns
+min_value = df_down['panel_number'].min()
+max_value = df_down['panel_number'].max()
 
-    Args:
-        df (pd.DataFrame): Original dataframe
+from_panel, to_panel = st.slider(
+    'Which panels are you interested in?',
+    min_value=min_value,
+    max_value=max_value,
+    value=[min_value, max_value])
+    
+# Add some spacing
+''
 
-    Returns:
-        pd.DataFrame: Filtered dataframe
-    """
-    modify = st.checkbox("Add filters")
+borings = df_down['Designation_boring | <lambda>'].unique()
 
-    if not modify:
-        return df
+if not len(borings):
+    st.warning("Select at least one boring")
 
-    df = df.copy()
+selected_borings = st.multiselect(
+    'Which borings would you like to view?',
+    borings,
+    ['AP2891', 'AP2957', 'AP2948', 'AP2951', 'AP2901', 'AP2904',
+       'AP2990', 'AP2907', 'AP2911', 'AP2986', 'AP2887', 'AP2929',
+       'AP2923', 'AP2916', 'AP2918', 'AP2913', 'AP2933', 'AP2927',
+       'AP2917'])
+# Add some spacing
+''
 
-    # Try to convert datetimes into a standard format (datetime, no timezone)
-    for col in df.columns:
-        if is_object_dtype(df[col]):
-            try:
-                df[col] = pd.to_datetime(df[col])
-            except Exception:
-                pass
+# Depht slider
 
-        if is_datetime64_any_dtype(df[col]):
-            df[col] = df[col].dt.tz_localize(None)
+min_depth_value = df_down['Depth | max'].min().astype('int64')
+max_depth_value = df_down['Depth | max'].max().astype('int64')
 
-    modification_container = st.container()
-
-    with modification_container:
-        to_filter_columns = st.multiselect("Filter dataframe on", df.columns)
-        for column in to_filter_columns:
-            left, right = st.columns((1, 20))
-            # Treat columns with < 10 unique values as categorical
-            if is_categorical_dtype(df[column]) or df[column].nunique() < 10:
-                user_cat_input = right.multiselect(
-                    f"Values for {column}",
-                    df[column].unique(),
-                    default=list(df[column].unique()),
-                )
-                df = df[df[column].isin(user_cat_input)]
-            elif is_numeric_dtype(df[column]):
-                _min = float(df[column].min())
-                _max = float(df[column].max())
-                step = (_max - _min) / 100
-                user_num_input = right.slider(
-                    f"Values for {column}",
-                    min_value=_min,
-                    max_value=_max,
-                    value=(_min, _max),
-                    step=step,
-                )
-                df = df[df[column].between(*user_num_input)]
-            elif is_datetime64_any_dtype(df[column]):
-                user_date_input = right.date_input(
-                    f"Values for {column}",
-                    value=(
-                        df[column].min(),
-                        df[column].max(),
-                    ),
-                )
-                if len(user_date_input) == 2:
-                    user_date_input = tuple(map(pd.to_datetime, user_date_input))
-                    start_date, end_date = user_date_input
-                    df = df.loc[df[column].between(start_date, end_date)]
-            else:
-                user_text_input = right.text_input(
-                    f"Substring or regex in {column}",
-                )
-                if user_text_input:
-                    df = df[df[column].astype(str).str.contains(user_text_input)]
-
-    return df
-
-
-
+from_depth, to_depth = st.slider(
+    'Which depths are you interested in?',
+    min_value=min_depth_value,
+    max_value=max_depth_value,
+    value=[min_depth_value, max_depth_value])
+    
 ''
 ''
 ''
@@ -234,7 +195,13 @@ elev_bins_sorted = sorted(df_down['bin_elevations'].unique(), key=lambda x: x.ri
 elev_bins_btronic_boring_sorted_str = [str(interval) for interval in elev_bins_sorted]
 
 # Filter the data
-filtered_df_down = filter_dataframe(df_down)
+filtered_df_down = df_down[
+    (df_down['Designation_boring | <lambda>'].isin(selected_borings))
+    & (df_down['panel_number'] <= to_panel)
+    & (from_panel <= df_down['panel_number'])
+    & (df_down['Depth | max'] <= to_depth)
+    & (from_depth <= df_down['Depth | max'])
+]
 
 st.header('btronic information over panel numbers', divider='gray')
 
@@ -264,7 +231,19 @@ with col2:
 
 ''
 ''
-st.dataframe(filter_dataframe(df))
+
+query = st.text_input("Filter dataframe")
+
+if query:
+    mask = filtered_df_down.applymap(lambda x: query in str(x)).any(axis=1)
+    filtered_df_down = filtered_df_down[mask]
+
+st.data_editor(
+    filtered_df_down,
+    hide_index=True, 
+    column_order=('bin_elevations', 'panel_number','ElementName | <lambda>', 'panel_type | <lambda>','Depth | max', 'Duration | [seconds]','Duration | [minutes]', 'layer length [m]','Performance rate | [cm/min]', 'Suspension Amount layer [m³] | mean','Soil Type | <lambda>', 'Susp.-Pressure | mean','PKDK M | mean', 'Suspension Amount | max', 'Supension Flow | mean','Rod Rotation Speed | mean', 'Suspension Amount2 | max','Crowd-Force | mean','Date | max', 'TopElevationOfElementCOL | max','ToeLevelOfElement | min', 'elevations | max', 'elevations | min','penetration | max','rounded_sta | max', 'Designation_boring | <lambda>','Elev_Class')
+) 
+
 
 #first_year = gdp_df[gdp_df['Year'] == from_year]
 #last_year = gdp_df[gdp_df['Year'] == to_year]
