@@ -118,17 +118,74 @@ def graph_interactive_boxplot(df, x, y, color, title, hover_data, ordered_array,
         ))
     )
     
+    if "Performance" in x: 
+        fig.update_xaxes(range=[0, 150])
+    elif "Suspension" in x:
+        fig.update_xaxes(range=[0, 1])
+    else:
+        pass
+    
     fig.update_yaxes(autorange="reversed")
 
     fig.update_traces(marker=dict(size=3))
     
     return fig
 
+def graph_interactive_bar(df, x, y, color, title, hover_data, ordered_array,baseline=None,annotation_text=None):
+    
+    fig = px.bar(df, x=x, y=y,
+                color=color,
+                title=title,
+                hover_data=[hover_data], # add panel number column to hover data
+                barmode='group',
+                text=round(df[x],2),
+                labels = {
+                    "G":"Gravel",
+                    "S":"Sand",
+                    "R":"Refusal",
+                    "M":"Silt"    
+                })
 
-
-
-
-
+    fig.update_layout(
+        autosize=False,
+        width=750,
+        height=1000,
+        margin=dict(
+            l=50,
+            r=50,
+            b=100,
+            t=100,
+            pad=4
+        ),
+        paper_bgcolor="#121212",
+        plot_bgcolor='#1e1e1e',
+        font_color='white',         # Font color for text
+        xaxis=dict(showgrid=True), # Turn off grid if desired
+        yaxis=dict(showgrid=True)
+    )
+    fig.update_traces(textposition = "inside")
+    
+    #fig.update_layout(yaxis={'categoryorder':'category ascending'})
+    fig.update_layout(
+        yaxis={'categoryorder':'array', 'categoryarray': ordered_array},
+    yaxis_title = 'Bin elevations [m]',
+    autotypenumbers='convert types',
+    legend=dict(
+        title=dict(
+            text='Soil classes'
+        ))
+    )
+    if annotation_text != None:
+        fig.add_vline(x=baseline, line_width=1, line_dash='dash', line_color='green',
+                      annotation_text=annotation_text,
+                      annotation=dict(font_size=20, font_family="Times New Roman"),
+                      annotation_position='bottom right'
+                     )
+#    fig.update_layout()
+    
+    fig.update_yaxes(autorange="reversed")
+    
+    return fig.show()
 
 
 path = './data/01_06_SCM_btron_boring.xlsx'
@@ -224,8 +281,6 @@ def filter_dataframe(df: pd.DataFrame) -> pd.DataFrame:
 
     return df
 
-
-
 ''
 ''
 ''
@@ -264,6 +319,30 @@ with col2:
 
 ''
 ''
+fig_px3 = graph_interactive_bar(filtered_df_down, x='Performance rate | [cm/min]', y=filtered_df_down['bin_elevations'].astype('str'),
+                            color='Soil Type | <lambda>',title='Av Performance vs Geology over depth (down)'
+                            ,hover_data=filtered_df_down['Performance rate | [cm/min]'],
+                      ordered_array = elev_bins_btronic_boring_sorted_str,baseline=0,annotation_text=None)
+
+fig_px4 = graph_interactive_bar(filtered_df_down, x='Suspension Amount layer [m³] | mean', y=filtered_df_down['bin_elevations'].astype('str'),
+                            color='Soil Type | <lambda>',title='Av Suspension vol vs Geology over depth (down)'
+                            ,hover_data=filtered_df_down['Suspension Amount layer [m³] | mean'],
+                      ordered_array = elev_bins_btronic_boring_sorted_str,baseline=0,annotation_text=None)
+
+col3, col4 = st.columns(2)
+
+with col3:
+    st.plotly_chart(fig_px3, use_container_width=True)
+
+# Place each figure in a column
+with col4:
+    st.plotly_chart(fig_px4, use_container_width=True)
+
+
+''
+''
+
+
 st.dataframe(filtered_df_down)
 
 #first_year = gdp_df[gdp_df['Year'] == from_year]
