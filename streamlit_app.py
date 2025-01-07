@@ -130,15 +130,7 @@ df_down = get_data(path)
 ## :pushpin: Data Analysis
 Explore MCD btronic data from database.
 '''
-# Programmatically switch to dark mode using a custom theme
-theme_settings = {
-    "base": "dark",
-    "primaryColor": "#1abc9c",
-    "backgroundColor": "#0e1117",
-    "secondaryBackgroundColor": "#262730",
-    "textColor": "#ffffff",
-}
-st.write(f"Theme settings: {theme_settings}")
+
 # Add some spacing
 ''
 ''
