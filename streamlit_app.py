@@ -28,12 +28,7 @@ st.set_page_config(
     layout="wide",
     menu_items = {
     'Get Help': 'gabriel.rosario@bauerfoundations.com',
-    'About': 
-        "#Development
-        Bauer Foundations Corp
-        Gabriel Rosario
-        #Changelog
-        Version 0.1"} 
+    'About':"#Development /n Bauer Foundations Corp /n Gabriel Rosario /n #Changelog Version 0.1"} 
 )
 
 # -----------------------------------------------------------------------------
