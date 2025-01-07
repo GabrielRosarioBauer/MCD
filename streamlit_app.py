@@ -143,6 +143,9 @@ from_panel, to_panel = st.slider(
     min_value=min_value,
     max_value=max_value,
     value=[min_value, max_value])
+    
+# Add some spacing
+''
 
 borings = df_down['Designation_boring | <lambda>'].unique()
 
@@ -156,17 +159,19 @@ selected_borings = st.multiselect(
        'AP2990', 'AP2907', 'AP2911', 'AP2986', 'AP2887', 'AP2929',
        'AP2923', 'AP2916', 'AP2918', 'AP2913', 'AP2933', 'AP2927',
        'AP2917'])
+# Add some spacing
+''
 
 # Sidebar with vertical slider
 
-min_depht_value = df_down['Depth | max'].min()
-max_depht_value = df_down['Depth | max'].max()
+min_depth_value = df_down['Depth | max'].min()
+max_depth_value = df_down['Depth | max'].max()
 
 from_depth, to_depth = st.slider(
-    'Which depth are you interested in?',
-    min_depht_value=min_depht_value,
-    max_depht_value=max_depht_value,
-    value=[min_depht_value, max_depht_value])
+    'Which depths are you interested in?',
+    min_value=min_depth_value,
+    max_value=max_depth_value,
+    value=[min_value, max_value])
     
 ''
 ''
