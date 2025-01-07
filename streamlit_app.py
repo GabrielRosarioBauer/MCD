@@ -27,12 +27,13 @@ st.set_page_config(
     page_icon=':bar_chart:', # This is an emoji shortcode. Could be a URL too.
     layout="wide",
     menu_items = {
+    'Get Help': 'gabriel.rosario@bauerfoundations.com',
     'About': 
-        '#Development'
-        'Bauer Foundations Corp'
-        'Gabriel Rosario'
-        '#Changelog'
-        'Version 0.1'} 
+        "#Development
+        Bauer Foundations Corp
+        Gabriel Rosario
+        #Changelog
+        Version 0.1"} 
 )
 
 # -----------------------------------------------------------------------------
