@@ -3,9 +3,22 @@ import pandas as pd
 import math
 from pathlib import Path
 
+import matplotlib
+import matplotlib.pyplot as plt
+import matplotlib.dates as mdates
+import matplotlib.colors
+import seaborn as sns
+import plotly.express as px
+from plotly.subplots import make_subplots
+import plotly.graph_objects as go
+
+import numpy as np
+import datetime
+
+
 # Set the title and favicon that appear in the Browser's tab bar.
 st.set_page_config(
-    page_title='GDP dashboard',
+    page_title='MCD dashboard',
     page_icon=':earth_americas:', # This is an emoji shortcode. Could be a URL too.
 )
 
@@ -13,51 +26,92 @@ st.set_page_config(
 # Declare some useful functions.
 
 @st.cache_data
-def get_gdp_data():
+def get_data(path):
     """Grab GDP data from a CSV file.
 
     This uses caching to avoid having to read the file every time. If we were
     reading from an HTTP endpoint instead of a file, it's a good idea to set
     a maximum age to the cache with the TTL argument: @st.cache_data(ttl='1d')
     """
-
+    dtypes_column = {"bin_elevations":"category",
+    "panel_number":np.int32,
+    "Susp.-Pressure | mean":np.float64,
+    "PKDK M | mean":np.float64,
+    "Suspension Amount | max":np.float64,
+    "Supension Flow | mean":np.float64,
+    "Rod Rotation Speed | mean":np.float64,
+    "Suspension Amount2 | max":np.float64,
+    "Crowd-Force | mean":np.float64,
+    "Depth | max":np.float64,
+    "Duration | [seconds]":np.int64,
+    "Date | max":"datetime64[ns]",
+    "TopElevationOfElementCOL | max":np.float64,
+    "ToeLevelOfElement | min":np.float64,
+    "elevations | max":np.float64,
+    "elevations | min":np.float64,
+    "penetration | max":np.int64,
+    "ElementName | <lambda>":object,
+    "panel_type | <lambda>":object,
+    "rounded_sta | max":np.float64,
+    "Designation_boring | <lambda>":object,
+    "Soil Type | <lambda>":object,
+    "Duration | [minutes]":np.float64,
+    "layer length [m]":np.float64,
+    "Performance rate | [cm/min]":np.float64,
+    "Suspension Amount layer [m³] | mean":np.float64,
+    "Elev_Class":object}
+    
     # Instead of a CSV on disk, you could read from an HTTP endpoint here too.
-    DATA_FILENAME = Path(__file__).parent/'data/gdp_data.csv'
-    raw_gdp_df = pd.read_csv(DATA_FILENAME)
+    df_down = pd.read_excel('./dataframes/01_06_SCM_btron_boring.xlsx', sheet_name='SCM_down_df', index_col=0, dtype=dtypes_column)
+     
+    
 
-    MIN_YEAR = 1960
-    MAX_YEAR = 2022
+    return df_down
 
-    # The data above has columns like:
-    # - Country Name
-    # - Country Code
-    # - [Stuff I don't care about]
-    # - GDP for 1960
-    # - GDP for 1961
-    # - GDP for 1962
-    # - ...
-    # - GDP for 2022
-    #
-    # ...but I want this instead:
-    # - Country Name
-    # - Country Code
-    # - Year
-    # - GDP
-    #
-    # So let's pivot all those year-columns into two: Year and GDP
-    gdp_df = raw_gdp_df.melt(
-        ['Country Code'],
-        [str(x) for x in range(MIN_YEAR, MAX_YEAR + 1)],
-        'Year',
-        'GDP',
+def graph_interactive_boxplot(df, x, y, color, title, hover_data, ordered_array, notched=False, point=None, y_axis_title=None):
+
+    fig = px.box(df, x=x, y=y,
+                 color=color,
+                 notched=notched, # used notched shape
+                 title=title,
+                 hover_data=[hover_data], # add panel number column to hover data
+                 points=point
+                )
+
+    fig.update_layout(
+        autosize=False,
+        width=750,
+        height=1000,
+        margin=dict(
+            l=50,
+            r=50,
+            b=100,
+            t=100,
+            pad=4
+        ),
+        paper_bgcolor="LightSteelBlue",
     )
+    #fig.update_layout(yaxis={'categoryorder':'category ascending'})
+    fig.update_layout(
+        yaxis={'categoryorder':'array', 'categoryarray': ordered_array},
+    yaxis_title = y_axis_title,
+    autotypenumbers='convert types',
+    legend=dict(
+        title=dict(
+            text='Soil classes'
+        ))
+    )
+    
+    fig.update_yaxes(autorange="reversed")
 
-    # Convert years from string to integers
-    gdp_df['Year'] = pd.to_numeric(gdp_df['Year'])
+    fig.update_traces(marker=dict(size=3))
+    
+    return fig
 
-    return gdp_df
 
-gdp_df = get_gdp_data()
+path = './data/01_06_SCM_btron_boring.xlsx'
+
+df_down = get_data(path)
 
 # -----------------------------------------------------------------------------
 # Draw the actual page
@@ -75,77 +129,80 @@ But it's otherwise a great (and did I mention _free_?) source of data.
 ''
 ''
 
-min_value = gdp_df['Year'].min()
-max_value = gdp_df['Year'].max()
+min_value = df_down['panel_number'].min()
+max_value = df_down['panel_number'].max()
 
-from_year, to_year = st.slider(
-    'Which years are you interested in?',
+from_panel, to_panel = st.slider(
+    'Which panels are you interested in?',
     min_value=min_value,
     max_value=max_value,
     value=[min_value, max_value])
 
-countries = gdp_df['Country Code'].unique()
+borings = df_down['Designation_boring | <lambda>'].unique()
 
-if not len(countries):
-    st.warning("Select at least one country")
+if not len(borings):
+    st.warning("Select at least one boring")
 
-selected_countries = st.multiselect(
-    'Which countries would you like to view?',
-    countries,
-    ['DEU', 'FRA', 'GBR', 'BRA', 'MEX', 'JPN'])
+selected_borings = st.multiselect(
+    'Which borings would you like to view?',
+    borings,
+    ['AP2891', 'AP2957', 'AP2948', 'AP2951', 'AP2901', 'AP2904',
+       'AP2990', 'AP2907', 'AP2911', 'AP2986', 'AP2887', 'AP2929',
+       'AP2923', 'AP2916', 'AP2918', 'AP2913', 'AP2933', 'AP2927',
+       'AP2917'])
 
 ''
 ''
 ''
 
 # Filter the data
-filtered_gdp_df = gdp_df[
-    (gdp_df['Country Code'].isin(selected_countries))
-    & (gdp_df['Year'] <= to_year)
-    & (from_year <= gdp_df['Year'])
+filtered_df_down = df_down[
+    (df_down['Designation_boring | <lambda>'].isin(selected_borings))
+    & (df_down['panel_number'] <= to_panel)
+    & (from_panel <= df_down['panel_number'])
 ]
 
-st.header('GDP over time', divider='gray')
+st.header('btronic information over panel numbers', divider='gray')
 
 ''
 
-st.line_chart(
-    filtered_gdp_df,
-    x='Year',
-    y='GDP',
-    color='Country Code',
-)
+graph_interactive_boxplot(filtered_df_down, x='Performance rate | [cm/min]', y=df_down_elev['bin_elevations'].astype('str'),
+                            color='Soil Type | <lambda>',title='SCM_2022 Performance Rate & Geology over depth (down)'
+                            ,hover_data=df_down_elev['panel_number'], ordered_array = elev_bins_btronic_boring_sorted_str, notched=False, point='all',y_axis_title='Bin elevations [m]')
+
+st.plotly_chart(
+    graph_interactive_boxplot, use_container_width=True)
 
 ''
 ''
 
 
-first_year = gdp_df[gdp_df['Year'] == from_year]
-last_year = gdp_df[gdp_df['Year'] == to_year]
+#first_year = gdp_df[gdp_df['Year'] == from_year]
+#last_year = gdp_df[gdp_df['Year'] == to_year]
 
-st.header(f'GDP in {to_year}', divider='gray')
+#st.header(f'GDP in {to_year}', divider='gray')
 
 ''
 
-cols = st.columns(4)
+#cols = st.columns(4)
 
-for i, country in enumerate(selected_countries):
-    col = cols[i % len(cols)]
+#for i, country in enumerate(selected_countries):
+#    col = cols[i % len(cols)]
 
-    with col:
-        first_gdp = first_year[first_year['Country Code'] == country]['GDP'].iat[0] / 1000000000
-        last_gdp = last_year[last_year['Country Code'] == country]['GDP'].iat[0] / 1000000000
+#    with col:
+#        first_gdp = first_year[first_year['Country Code'] == country]['GDP'].iat[0] / 1000000000
+#        last_gdp = last_year[last_year['Country Code'] == country]['GDP'].iat[0] / 1000000000
 
-        if math.isnan(first_gdp):
-            growth = 'n/a'
-            delta_color = 'off'
-        else:
-            growth = f'{last_gdp / first_gdp:,.2f}x'
-            delta_color = 'normal'
+#        if math.isnan(first_gdp):
+#            growth = 'n/a'
+#            delta_color = 'off'
+#        else:
+#            growth = f'{last_gdp / first_gdp:,.2f}x'
+#            delta_color = 'normal'
 
-        st.metric(
-            label=f'{country} GDP',
-            value=f'{last_gdp:,.0f}B',
-            delta=growth,
-            delta_color=delta_color
-        )
+#        st.metric(
+#            label=f'{country} GDP',
+#            value=f'{last_gdp:,.0f}B',
+#            delta=growth,
+#            delta_color=delta_color
+#        )

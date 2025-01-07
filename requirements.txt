@@ -1,2 +1,10 @@
 streamlit
 pandas
+numpy
+datetime
+
+matplotlib
+seaborn
+plotly.express
+plotly.subplots
+plotly.graph_objects
