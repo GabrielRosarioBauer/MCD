@@ -65,8 +65,8 @@ def get_data(path):
     df_down = pd.read_excel('./data/01_06_SCM_btron_boring.xlsx', sheet_name='SCM_down_df', index_col=0, dtype=dtypes_column)
     
     def string_to_interval(s):
-    left = float(s.split(',')[0][1:])  # Extract left bound
-    right = float(s.split(',')[1][:-1])  # Extract right bound
+        left = float(s.split(',')[0][1:])  # Extract left bound
+        right = float(s.split(',')[1][:-1])  # Extract right bound
     return pd.Interval(left=left, right=right, closed='right')
     
     categories = pd.Categorical(parsed_intervals)                            
