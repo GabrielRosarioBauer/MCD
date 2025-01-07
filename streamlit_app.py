@@ -9,8 +9,6 @@ import matplotlib.dates as mdates
 import matplotlib.colors
 import seaborn as sns
 import plotly.express as px
-from plotly.subplots import make_subplots
-import plotly.graph_objects as go
 
 import numpy as np
 import datetime
