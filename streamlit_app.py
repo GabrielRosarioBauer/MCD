@@ -95,6 +95,10 @@ def graph_interactive_boxplot(df, x, y, color, title, hover_data, ordered_array,
             pad=4
         ),
         paper_bgcolor="#121212",
+        plot_bgcolor='#1e1e1e',
+        font_color='white',         # Font color for text
+        xaxis=dict(showgrid=True), # Turn off grid if desired
+        yaxis=dict(showgrid=True)
     )
     #fig.update_layout(yaxis={'categoryorder':'category ascending'})
     fig.update_layout(
