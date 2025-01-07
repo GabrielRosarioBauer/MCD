@@ -60,7 +60,7 @@ def get_data(path):
     "Elev_Class":object}
     
     # Instead of a CSV on disk, you could read from an HTTP endpoint here too.
-    df_down = pd.read_excel('./dataframes/01_06_SCM_btron_boring.xlsx', sheet_name='SCM_down_df', index_col=0, dtype=dtypes_column)
+    df_down = pd.read_excel('./data/01_06_SCM_btron_boring.xlsx', sheet_name='SCM_down_df', index_col=0, dtype=dtypes_column)
      
     
 
