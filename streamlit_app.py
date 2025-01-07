@@ -162,7 +162,7 @@ selected_borings = st.multiselect(
 # Add some spacing
 ''
 
-# Sidebar with vertical slider
+# Depht slider
 
 min_depth_value = df_down['Depth | max'].min().astype('int64')
 max_depth_value = df_down['Depth | max'].max().astype('int64')
@@ -171,7 +171,7 @@ from_depth, to_depth = st.slider(
     'Which depths are you interested in?',
     min_value=min_depth_value,
     max_value=max_depth_value,
-    value=[min_value, max_value])
+    value=[min_depth_value, max_depth_value])
     
 ''
 ''
