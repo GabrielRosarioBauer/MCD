@@ -17,9 +17,17 @@ import datetime
 # Set the title and favicon that appear in the Browser's tab bar.
 st.set_page_config(
     page_title='MCD dashboard',
-    page_icon=':earth_americas:', # This is an emoji shortcode. Could be a URL too.
+    page_icon=':bar_chart:', # This is an emoji shortcode. Could be a URL too.
 )
-
+# Programmatically switch to dark mode using a custom theme
+theme_settings = {
+    "base": "dark",
+    "primaryColor": "#1abc9c",
+    "backgroundColor": "#0e1117",
+    "secondaryBackgroundColor": "#262730",
+    "textColor": "#ffffff",
+}
+st.write(f"Theme settings: {theme_settings}")
 # -----------------------------------------------------------------------------
 # Declare some useful functions.
 
