@@ -201,7 +201,7 @@ fig_px1 = graph_interactive_boxplot(filtered_df_down, x='Performance rate | [cm/
 
 fig_px2 = graph_interactive_boxplot(filtered_df_down, x='Performance rate | [cm/min]', y='Soil Type | <lambda>',
                             color='Soil Type | <lambda>',title='SCM Performance rateVsGeology (down)'
-                            ,hover_data=filtered_df_down['panel_number'], ordered_array = ['G','S'],
+                            ,hover_data=filtered_df_down['panel_number'], ordered_array = filtered_df_down['Soil Type | <lambda>'].unique(),
                             notched=False, point='all',y_axis_title='Soil type')
 
 # Create two columns
