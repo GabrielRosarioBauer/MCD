@@ -326,9 +326,8 @@ with col2:
 ''
 ''
 
-ave_prod_elev_layer_down = filtered_df_down.groupby(
-    by=['bin_elevations','Soil Type | <lambda>','Elev_Class'])[['Performance rate | [cm/min]',
-                                                                'Suspension Amount layer [m³] | mean']].mean()
+ave_prod_elev_layer_down = filtered_df_down.groupby(by=['bin_elevations','Soil Type | <lambda>','Elev_Class'])[['Performance rate | [cm/min]','Suspension Amount layer [m³] | mean']].mean()
+
 ave_prod_elev_layer_down.dropna(inplace=True)
 
 fig_px3 = graph_interactive_bar(ave_prod_elev_layer_down, x='Performance rate | [cm/min]', y=ave_prod_elev_layer_down['bin_elevations'].astype('str'),
