@@ -61,9 +61,7 @@ def get_data(path):
     
     # Instead of a CSV on disk, you could read from an HTTP endpoint here too.
     df_down = pd.read_excel('./data/01_06_SCM_btron_boring.xlsx', sheet_name='SCM_down_df', index_col=0, dtype=dtypes_column)
-     
     
-
     return df_down
 
 def graph_interactive_boxplot(df, x, y, color, title, hover_data, ordered_array, notched=False, point=None, y_axis_title=None):
@@ -163,13 +161,14 @@ filtered_df_down = df_down[
 st.header('btronic information over panel numbers', divider='gray')
 
 ''
+elev_bins_sorted = sorted(filtered_df_down['bin_elevations'].unique(), key=lambda x: x.right, reverse=True)
+elev_bins_btronic_boring_sorted_str = [str(interval) for interval in elev_bins_sorted]
 
-graph_interactive_boxplot(filtered_df_down, x='Performance rate | [cm/min]', y=df_down_elev['bin_elevations'].astype('str'),
+fig_px = graph_interactive_boxplot(filtered_df_down, x='Performance rate | [cm/min]', y=filtered_df_down['bin_elevations'].astype('str'),
                             color='Soil Type | <lambda>',title='SCM_2022 Performance Rate & Geology over depth (down)'
-                            ,hover_data=df_down_elev['panel_number'], ordered_array = elev_bins_btronic_boring_sorted_str, notched=False, point='all',y_axis_title='Bin elevations [m]')
+                            ,hover_data=filtered_df_down['panel_number'], ordered_array = elev_bins_btronic_boring_sorted_str, notched=False, point='all',y_axis_title='Bin elevations [m]')
 
-st.plotly_chart(
-    graph_interactive_boxplot, use_container_width=True)
+st.plotly_chart(fig_px, use_container_width=True)
 
 ''
 ''
