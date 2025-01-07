@@ -161,6 +161,9 @@ selected_borings = st.multiselect(
 ''
 ''
 
+elev_bins_sorted = sorted(df_down['bin_elevations'].unique(), key=lambda x: x.right, reverse=True)
+elev_bins_btronic_boring_sorted_str = [str(interval) for interval in elev_bins_sorted]
+
 # Filter the data
 filtered_df_down = df_down[
     (df_down['Designation_boring | <lambda>'].isin(selected_borings))
@@ -171,8 +174,7 @@ filtered_df_down = df_down[
 st.header('btronic information over panel numbers', divider='gray')
 
 ''
-elev_bins_sorted = sorted(filtered_df_down['bin_elevations'].unique(), key=lambda x: x.right, reverse=True)
-elev_bins_btronic_boring_sorted_str = [str(interval) for interval in elev_bins_sorted]
+
 
 fig_px = graph_interactive_boxplot(filtered_df_down, x='Performance rate | [cm/min]', y=filtered_df_down['bin_elevations'].astype('str'),
                             color='Soil Type | <lambda>',title='SCM_2022 Performance Rate & Geology over depth (down)'
