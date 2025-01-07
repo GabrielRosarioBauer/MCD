@@ -222,7 +222,7 @@ with col2:
 query = st.text_input("Filter dataframe")
 
 if query:
-    mask = filtered_df_down.applymap(lambda x: query in str(x).lower()).any(axis=1)
+    mask = filtered_df_down.applymap(lambda x: query in str(x)).any(axis=1)
     filtered_df_down = filtered_df_down[mask]
 
 st.data_editor(
