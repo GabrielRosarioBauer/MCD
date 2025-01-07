@@ -68,8 +68,7 @@ def get_data(path):
         left = float(s.split(',')[0][1:])  # Extract left bound
         right = float(s.split(',')[1][:-1])  # Extract right bound
         return pd.Interval(left=left, right=right, closed='right')
-    
-    categories = pd.Categorical(parsed_intervals)                            
+                           
     df_down['bin_elevations'] = pd.Categorical(df_down['bin_elevations'].apply(string_to_interval))
     
     return df_down
